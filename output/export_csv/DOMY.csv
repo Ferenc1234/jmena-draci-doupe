@@ -1,0 +1,81 @@
+NAZEV,ROD,PAD2,PAD3,PAD4,PAD5,PAD6,PAD7,DUM,HOSPODA,OBCHOD,NEVESTINEC
+Cerven  lampicka,F,Cerven lampicky,Cerven lampicce,Cervenou lampicku,Cerven  lampicko,Cerven lampicce,Cervenou lampickou,0,0,0,1
+Cerven  lucerna,F,Cerven lucerny,Cerven lucerne,Cervenou lucernu,Cerven  lucerno,Cerven lucerne,Cervenou lucernou,0,0,0,1
+Cerven  lucernicka,F,Cerven lucernicky,Cerven lucernicce,Cervenou lucernicku,Cerven  lucernicko,Cerven lucernicce,Cervenou lucernickou,0,0,0,1
+Domov,M,Domova,Domovu,Domov,Domove,Domovu,Domovem,1,1,1,1
+Doup tko,N,Doup tka,Doup tku,Doup tko,Doup tko,Doup tku,Doup tkem,0,0,0,1
+Doupe,N,Doupete,Doupeti,Doupe,Doupe,Doupeti,Doupetem,0,1,0,1
+Dum duchu,M,Domu duchu,Domu duchu,Dum duchu,Dome duchu,Domu duchu,Domem duchu,1,0,0,0
+Dum hruzy,M,Domu hruzy,Domu hruzy,Dum hruzy,Dome hruzy,Domu hruzy,Domem hruzy,1,0,0,0
+Dum loupeznĄku,M,Domu loupeznĄku,Domu loupeznĄku,Dum loupeznĄku,Dome loupeznĄku,Domu loupeznĄku,Domem loupeznĄku,1,1,0,0
+Dum strachu,M,Domu strachu,Domu strachu,Dum strachu,Dome strachu,Domu strachu,Domem strachu,1,0,0,0
+HolubĄ dum,M,HolubĄho domu,HolubĄmu domu,HolubĄ dum,HolubĄ dome,HolubĄm domu,HolubĄm domem,1,0,0,0
+Koliba,F,Koliby,Kolibe,Kolibu,Kolibo,Kolibe,Kolibou,1,1,0,0
+Kosten  noha,F,Kosten nohy,Kosten noze,Kostenou nohu,Kosten  noho,Kosten noze,Kostenou nohou,0,1,0,1
+Kosten  ruka,F,Kosten ruky,Kosten ruce,Kostenou ruku,Kosten  ruko,Kosten ruce,Kostenou rukou,0,1,0,1
+Lampicka,F,Lampicky,Lampicce,Lampicku,Lampicko,Lampicce,Lampickou,0,0,0,1
+Na petnĄku,,Na petnĄku,Na petnĄku,Na petnĄku,Na petnĄku,Na petnĄku,Na petnĄku,1,1,1,0
+N levna,F,N levny,N levne,N levnu,N levno,N levne,N levnou,0,1,0,0
+N pravna,F,N pravny,N pravne,N pravnu,N pravno,N pravne,N pravnou,0,1,0,1
+Pitevna,F,Pitevny,Pitevne,Pitevnu,Pitevno,Pitevne,Pitevnou,0,1,0,0
+Pod hradbami,,Pod hradbami,Pod hradbami,Pod hradbami,Pod hradbami,Pod hradbami,Pod hradbami,0,1,1,0
+PoslednĄ moznost,F,PoslednĄ moznosti,PoslednĄ moznosti,PoslednĄ moznost,PoslednĄ moznosti,PoslednĄ moznosti,PoslednĄ moznostĄ,0,1,1,1
+PoslednĄ vyspa,F,PoslednĄ vyspy,PoslednĄ vyspe,PoslednĄ vyspu,PoslednĄ vyspo,PoslednĄ vyspe,PoslednĄ vyspou,0,1,1,0
+Pr telsk  ruka,F,Pr telsk ruky,Pr telsk ruce,Pr telskou ruku,Pr telsk  ruko,Pr telsk ruce,Pr telskou rukou,0,1,1,1
+PrĄvetiv  ruka,F,PrĄvetiv ruky,PrĄvetiv ruce,PrĄvetivou ruku,PrĄvetiv  ruko,PrĄvetiv ruce,PrĄvetivou rukou,0,1,1,1
+Pustevna,F,Pustevny,Pustevne,Pustevnu,Pustevno,Pustevne,Pustevnou,1,1,0,0
+Salas,F,Salase,Salasi,Salas,Salasi,Salasi,SalasĄ,1,0,0,0
+Strasidelny dum,M,Strasidelnho domu,Strasidelnmu domu,Strasidelny dum,Strasidelny dome,Strasidelnm domu,Strasidelnym domem,1,0,0,0
+U bl zna,,U bl zna,U bl zna,U bl zna,U bl zna,U bl zna,U bl zna,0,1,1,0
+U blivajznĄka,,U blivajznĄka,U blivajznĄka,U blivajznĄka,U blivajznĄka,U blivajznĄka,U blivajznĄka,0,1,0,0
+U dvou gorgon,,U dvou gorgon,U dvou gorgon,U dvou gorgon,U dvou gorgon,U dvou gorgon,U dvou gorgon,1,1,1,1
+U dvou sluncĄ,,U dvou sluncĄ,U dvou sluncĄ,U dvou sluncĄ,U dvou sluncĄ,U dvou sluncĄ,U dvou sluncĄ,1,1,0,0
+U dvou sluncu,,U dvou sluncu,U dvou sluncu,U dvou sluncu,U dvou sluncu,U dvou sluncu,U dvou sluncu,1,0,0,0
+U gorgony,,U gorgony,U gorgony,U gorgony,U gorgony,U gorgony,U gorgony,1,1,1,1
+U hadĄ hlavy,,U hadĄ hlavy,U hadĄ hlavy,U hadĄ hlavy,U hadĄ hlavy,U hadĄ hlavy,U hadĄ hlavy,0,1,1,0
+U hadĄho ocasu,,U hadĄho ocasu,U hadĄho ocasu,U hadĄho ocasu,U hadĄho ocasu,U hadĄho ocasu,U hadĄho ocasu,1,1,1,1
+U idiota,,U idiota,U idiota,U idiota,U idiota,U idiota,U idiota,0,1,1,0
+U kancĄ hlavy,,U kancĄ hlavy,U kancĄ hlavy,U kancĄ hlavy,U kancĄ hlavy,U kancĄ hlavy,U kancĄ hlavy,0,1,0,0
+U kancĄ nohy,,U kancĄ nohy,U kancĄ nohy,U kancĄ nohy,U kancĄ nohy,U kancĄ nohy,U kancĄ nohy,0,1,0,0
+U kr lovny,,U kr lovny,U kr lovny,U kr lovny,U kr lovny,U kr lovny,U kr lovny,0,0,0,1
+U lopaty,,U lopaty,U lopaty,U lopaty,U lopaty,U lopaty,U lopaty,1,1,1,0
+U medvedu,,U medvedu,U medvedu,U medvedu,U medvedu,U medvedu,U medvedu,1,1,0,0
+U mlhy,,U mlhy,U mlhy,U mlhy,U mlhy,U mlhy,U mlhy,1,1,1,0
+U mostu ze sudu,,U mostu ze sudu,U mostu ze sudu,U mostu ze sudu,U mostu ze sudu,U mostu ze sudu,U mostu ze sudu,0,1,1,0
+U mrtvho papouska,,U mrtvho papouska,U mrtvho papouska,U mrtvho papouska,U mrtvho papouska,U mrtvho papouska,U mrtvho papouska,1,1,1,0
+U pecen husy,,U pecen husy,U pecen husy,U pecen husy,U pecen husy,U pecen husy,U pecen husy,0,1,0,0
+U periny,,U periny,U periny,U periny,U periny,U periny,U periny,0,0,0,1
+U petnĄka,,U petnĄka,U petnĄka,U petnĄka,U petnĄka,U petnĄka,U petnĄka,1,1,1,0
+U pobreznĄ krysy,,U pobreznĄ krysy,U pobreznĄ krysy,U pobreznĄ krysy,U pobreznĄ krysy,U pobreznĄ krysy,U pobreznĄ krysy,0,1,0,1
+U poctivce,,U poctivce,U poctivce,U poctivce,U poctivce,U poctivce,U poctivce,0,1,1,0
+U preclĄka,,U preclĄka,U preclĄka,U preclĄka,U preclĄka,U preclĄka,U preclĄka,0,1,1,0
+U princezny,,U princezny,U princezny,U princezny,U princezny,U princezny,U princezny,0,0,0,1
+U prĄstavnĄ coury,,U prĄstavnĄ coury,U prĄstavnĄ coury,U prĄstavnĄ coury,U prĄstavnĄ coury,U prĄstavnĄ coury,U prĄstavnĄ coury,0,0,0,1
+U prĄtele,,U prĄtele,U prĄtele,U prĄtele,U prĄtele,U prĄtele,U prĄtele,0,1,0,0
+U prĄvozu,,U prĄvozu,U prĄvozu,U prĄvozu,U prĄvozu,U prĄvozu,U prĄvozu,1,1,1,0
+U sedmi skal,,U sedmi skal,U sedmi skal,U sedmi skal,U sedmi skal,U sedmi skal,U sedmi skal,1,1,1,0
+U smradlavho tchore,,U smradlavho tchore,U smradlavho tchore,U smradlavho tchore,U smradlavho tchore,U smradlavho tchore,U smradlavho tchore,0,1,0,0
+U smradocha,,U smradocha,U smradocha,U smradocha,U smradocha,U smradocha,U smradocha,0,1,0,0
+U stonozky,,U stonozky,U stonozky,U stonozky,U stonozky,U stonozky,U stonozky,1,1,1,0
+U svatouska,,U svatouska,U svatouska,U svatouska,U svatouska,U svatouska,U svatouska,1,1,1,0
+U teplouse,,U teplouse,U teplouse,U teplouse,U teplouse,U teplouse,U teplouse,0,1,0,1
+U trĄ gorgon,,U trĄ gorgon,U trĄ gorgon,U trĄ gorgon,U trĄ gorgon,U trĄ gorgon,U trĄ gorgon,1,1,1,1
+U trĄ kapru,,U trĄ kapru,U trĄ kapru,U trĄ kapru,U trĄ kapru,U trĄ kapru,U trĄ kapru,1,1,1,0
+U trĄ vedem,,U trĄ vedem,U trĄ vedem,U trĄ vedem,U trĄ vedem,U trĄ vedem,U trĄ vedem,1,1,1,1
+U velk sekyry,,U velk sekyry,U velk sekyry,U velk sekyry,U velk sekyry,U velk sekyry,U velk sekyry,1,1,1,0
+U vsech svatych,,U vsech svatych,U vsech svatych,U vsech svatych,U vsech svatych,U vsech svatych,U vsech svatych,1,1,1,0
+U zahnutho zob ku,,U zahnutho zob ku,U zahnutho zob ku,U zahnutho zob ku,U zahnutho zob ku,U zahnutho zob ku,U zahnutho zob ku,1,1,1,1
+U zelenho draka,,U zelenho draka,U zelenho draka,U zelenho draka,U zelenho draka,U zelenho draka,U zelenho draka,1,1,1,0
+U zkrĄzenych mecu,,U zkrĄzenych mecu,U zkrĄzenych mecu,U zkrĄzenych mecu,U zkrĄzenych mecu,U zkrĄzenych mecu,U zkrĄzenych mecu,0,1,1,0
+U zlatho draka,,U zlatho draka,U zlatho draka,U zlatho draka,U zlatho draka,U zlatho draka,U zlatho draka,1,1,1,0
+U zlomenho mece,,U zlomenho mece,U zlomenho mece,U zlomenho mece,U zlomenho mece,U zlomenho mece,U zlomenho mece,1,1,1,0
+U zvonu,,U zvonu,U zvonu,U zvonu,U zvonu,U zvonu,U zvonu,1,1,1,1
+V bavlnce,,V bavlnce,V bavlnce,V bavlnce,V bavlnce,V bavlnce,V bavlnce,0,0,0,1
+V coudu,,V coudu,V coudu,V coudu,V coudu,V coudu,V coudu,0,1,0,0
+V cudu,,V cudu,V cudu,V cudu,V cudu,V cudu,V cudu,0,1,0,0
+V h ji,,V h ji,V h ji,V h ji,V h ji,V h ji,V h ji,0,1,0,0
+V Z kopu,,V Z kopu,V Z kopu,V Z kopu,V Z kopu,V Z kopu,V Z kopu,1,1,1,1
+Vranovka,F,Vranovky,Vranovce,Vranovku,Vranovko,Vranovce,Vranovkou,1,0,0,0
+Vybuch v snĄ,M,Vybuchu v snĄ,Vybuchu v snĄ,Vybuch v snĄ,Vybuchu v snĄ,Vybuchu v snĄ,Vybuchem v snĄ,0,0,0,1
+Z kop,M,Z kopu,Z kopu,Z kop,Z kope,Z kopu,Z kopem,1,1,0,1
+Zemljanka,F,Zemljanky,Zemljance,Zemljanku,Zemljanko,Zemljance,Zemljankou,1,0,0,0
