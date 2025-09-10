@@ -1,0 +1,19 @@
+# Virtual envs
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Temporary extraction directory
+work_extracted/
+
+# Jupyter / misc
+.ipynb_checkpoints/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# We DO want to keep generated output (Variant B), so NOT ignoring output/

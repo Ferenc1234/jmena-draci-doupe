@@ -1,0 +1,65 @@
+name: Convert DBF to Excel/CSV
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'jmena(1).zip'
+      - 'convert_drd_names.py'
+      - 'requirements.txt'
+      - '.github/workflows/convert-drd-jmena.yml'
+  pull_request:
+    paths:
+      - 'jmena(1).zip'
+      - 'convert_drd_names.py'
+      - 'requirements.txt'
+      - '.github/workflows/convert-drd-jmena.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run conversion
+        run: |
+          python convert_drd_names.py "jmena(1).zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: drd-jmena-export
+          path: |
+            output/**
+
+      - name: Commit generated output
+        if: ${{ github.actor != 'github-actions' }}
+        run: |
+          if [ -d output ]; then
+            git config user.name "github-actions"
+            git config user.email "actions@users.noreply.github.com"
+            # Add only if there are changes
+            git add output || true
+            if ! git diff --cached --quiet; then
+              git commit -m "chore: update generated Excel and CSV export" || true
+              git push || true
+            else
+              echo "No changes in generated output."
+            fi
+          else
+            echo "No output directory found; skipping commit."
+          fi
