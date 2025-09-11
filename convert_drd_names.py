@@ -25,6 +25,14 @@ except ImportError as e:
     print("Please install: pip install dbfread openpyxl pandas chardet")
     sys.exit(1)
 
+# Import diacritizer
+try:
+    from diacritizer import CzechDiacritizer
+except ImportError as e:
+    print(f"Warning: Could not import diacritizer: {e}")
+    print("Diacritization will be disabled")
+    CzechDiacritizer = None
+
 
 def score_czech_encoding(text_sample: str) -> float:
     """
@@ -143,18 +151,84 @@ def convert_dbf_to_dataframe(dbf_path: str, encoding: str) -> pd.DataFrame:
         raise
 
 
+def detect_pad_columns(df: pd.DataFrame) -> List[str]:
+    """Detect PAD columns (PAD1, PAD2, etc.) in DataFrame."""
+    pad_columns = []
+    for col in df.columns:
+        if isinstance(col, str) and col.upper().startswith('PAD') and len(col) == 4:
+            # Check if it's PAD followed by a digit
+            if col[3].isdigit():
+                pad_columns.append(col)
+    return sorted(pad_columns)
+
+
+def apply_diacritization(
+    df: pd.DataFrame, 
+    diacritizer: Optional['CzechDiacritizer'] = None
+) -> pd.DataFrame:
+    """Apply diacritization to PAD columns in DataFrame."""
+    if diacritizer is None or CzechDiacritizer is None:
+        return df
+    
+    # Make a copy to avoid modifying original
+    result_df = df.copy()
+    
+    # Detect PAD columns
+    pad_columns = detect_pad_columns(df)
+    
+    if not pad_columns:
+        print("  No PAD columns detected for diacritization")
+        return result_df
+    
+    print(f"  Applying diacritization to {len(pad_columns)} PAD columns: {', '.join(pad_columns)}")
+    
+    # Apply diacritization to each PAD column
+    for col in pad_columns:
+        if col in result_df.columns:
+            # Convert column to string, handling NaN values
+            column_values = result_df[col].astype(str).fillna('')
+            
+            # Diacritize the column
+            diacritized_values = diacritizer.diacritize_column(
+                column_values.tolist(), 
+                col
+            )
+            
+            # Update DataFrame
+            result_df[col] = diacritized_values
+    
+    return result_df
+
+
 def process_dbf_files(
     zip_path: str,
     output_dir: str = "output",
-    force_encoding: Optional[str] = None
+    force_encoding: Optional[str] = None,
+    diacritize: bool = True,
+    prefer_genpl_uu: bool = True
 ) -> Dict[str, str]:
     """
     Process all DBF files in a ZIP archive.
+    
+    Args:
+        zip_path: Path to ZIP file containing DBF files
+        output_dir: Output directory for converted files
+        force_encoding: Force specific encoding (overrides auto-detection)
+        diacritize: Whether to apply diacritization to PAD columns
+        prefer_genpl_uu: Whether to prefer -ů endings in PAD2 columns
     
     Returns:
         Dictionary mapping DBF filenames to their detected/used encodings
     """
     os.makedirs(output_dir, exist_ok=True)
+    
+    # Initialize diacritizer if enabled
+    diacritizer = None
+    if diacritize and CzechDiacritizer is not None:
+        print(f"Initializing diacritizer (prefer_genpl_uu: {prefer_genpl_uu})...")
+        diacritizer = CzechDiacritizer(prefer_genpl_uu=prefer_genpl_uu)
+    elif diacritize:
+        print("Warning: Diacritization requested but diacritizer not available")
     
     # Extract ZIP to temporary directory
     temp_dir = Path(output_dir) / "temp_dbf"
@@ -210,6 +284,10 @@ def process_dbf_files(
                         
                         print(f"  Loaded {len(df)} records with {len(df.columns)} columns")
                         
+                        # Apply diacritization if enabled
+                        if diacritizer is not None:
+                            df = apply_diacritization(df, diacritizer)
+                        
                         # Add to Excel workbook
                         sheet_name = base_name[:31]  # Excel sheet name limit
                         df.to_excel(excel_writer, sheet_name=sheet_name, index=False)
@@ -225,6 +303,10 @@ def process_dbf_files(
                         encoding_summary[dbf_name] += f" (ERROR: {e})"
             
             print(f"\nExcel workbook saved to: {excel_path}")
+            
+            # Print diacritization stats if applied
+            if diacritizer is not None:
+                diacritizer.print_stats()
             
     finally:
         # Clean up temporary files
@@ -253,12 +335,33 @@ def main():
         choices=['cp852', 'cp1250', 'iso-8859-2'],
         help="Force specific encoding for all DBF files (overrides auto-detection)"
     )
+    parser.add_argument(
+        "--diacritize",
+        choices=['on', 'off'],
+        default='on',
+        help="Enable/disable diacritization of PAD columns (default: on)"
+    )
+    parser.add_argument(
+        "--prefer-genpl-uu",
+        action="store_true",
+        default=True,
+        help="Prefer -ů endings in PAD2 columns (default: enabled)"
+    )
+    parser.add_argument(
+        "--no-prefer-genpl-uu",
+        action="store_true",
+        help="Disable -ů preference in PAD2 columns"
+    )
     
     args = parser.parse_args()
     
     if not os.path.exists(args.zip_file):
         print(f"Error: ZIP file not found: {args.zip_file}")
         sys.exit(1)
+    
+    # Parse diacritization settings
+    diacritize_enabled = args.diacritize == 'on'
+    prefer_genpl_uu = args.prefer_genpl_uu and not args.no_prefer_genpl_uu
     
     print(f"Converting DBF files from: {args.zip_file}")
     print(f"Output directory: {args.output_dir}")
@@ -268,11 +371,17 @@ def main():
     else:
         print("Using automatic encoding detection")
     
+    print(f"Diacritization: {'enabled' if diacritize_enabled else 'disabled'}")
+    if diacritize_enabled:
+        print(f"PAD2 -ů preference: {'enabled' if prefer_genpl_uu else 'disabled'}")
+    
     try:
         encoding_summary = process_dbf_files(
             args.zip_file,
             args.output_dir,
-            args.encoding
+            args.encoding,
+            diacritize_enabled,
+            prefer_genpl_uu
         )
         
         print("\n" + "="*60)

@@ -75,7 +75,7 @@ jobs:
     
     - name: Convert DBF files
       run: |
-        python convert_drd_names.py "$ZIP_PATH" --output-dir output $ENCODING_ARG
+        python convert_drd_names.py "$ZIP_PATH" --output-dir output --diacritize on --prefer-genpl-uu $ENCODING_ARG
     
     - name: Create output ZIP archive
       run: |
