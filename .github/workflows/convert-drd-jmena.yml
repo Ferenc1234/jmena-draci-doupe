@@ -79,16 +79,54 @@ jobs:
     
     - name: Create output ZIP archive
       run: |
-        if [ -d "output" ] && [ "$(ls -A output)" ]; then
-          cd output
-          zip -r ../drd-jmena-export.zip .
-          cd ..
-          echo "Created drd-jmena-export.zip with contents:"
-          unzip -l drd-jmena-export.zip
-        else
-          echo "Error: No output files generated"
+        # Validate output directory exists and contains files
+        if [ ! -d "output" ]; then
+          echo "Error: Output directory 'output' does not exist"
           exit 1
         fi
+        
+        if [ ! "$(ls -A output 2>/dev/null)" ]; then
+          echo "Error: Output directory 'output' is empty"
+          exit 1
+        fi
+        
+        echo "Output directory contains:"
+        ls -la output/
+        
+        # Create ZIP archive
+        cd output
+        zip -r ../drd-jmena-export.zip .
+        cd ..
+        
+        # Validate ZIP file was created successfully
+        if [ ! -f "drd-jmena-export.zip" ]; then
+          echo "Error: Failed to create drd-jmena-export.zip"
+          exit 1
+        fi
+        
+        # Verify ZIP file is not empty
+        if [ ! -s "drd-jmena-export.zip" ]; then
+          echo "Error: drd-jmena-export.zip is empty"
+          exit 1
+        fi
+        
+        echo "Successfully created drd-jmena-export.zip with contents:"
+        unzip -l drd-jmena-export.zip
+    
+    - name: Validate ZIP artifact before upload
+      run: |
+        if [ ! -f "drd-jmena-export.zip" ]; then
+          echo "Error: drd-jmena-export.zip not found for upload"
+          exit 1
+        fi
+        
+        if [ ! -s "drd-jmena-export.zip" ]; then
+          echo "Error: drd-jmena-export.zip is empty"
+          exit 1
+        fi
+        
+        echo "ZIP artifact validation successful:"
+        ls -lh drd-jmena-export.zip
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -105,9 +143,19 @@ jobs:
         (github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip-convert]')) ||
         (github.event_name == 'workflow_dispatch')
       run: |
-        # Configure git
+        # Check if GH_PAT secret is available
+        if [ -z "${{ secrets.GH_PAT }}" ]; then
+          echo "Error: GH_PAT secret is not configured. Please add a Personal Access Token as repository secret named 'GH_PAT'."
+          echo "This token is required for pushing changes to the repository."
+          exit 1
+        fi
+        
+        # Configure git with PAT
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
+        
+        # Set up authentication using Personal Access Token
+        git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}.git
         
         # Add generated files
         git add output/
@@ -130,7 +178,14 @@ jobs:
             COMMIT_MSG="Convert DRD names [skip-convert]"
           fi
           
-          # Commit and push
+          # Commit and push with error handling
           git commit -m "$COMMIT_MSG"
-          git push
+          
+          if ! git push; then
+            echo "Error: Failed to push changes. Please check GH_PAT permissions."
+            echo "The Personal Access Token must have 'repo' scope and write access to this repository."
+            exit 1
+          fi
+          
+          echo "Successfully pushed changes to repository"
         fi
