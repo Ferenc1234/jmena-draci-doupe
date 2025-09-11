@@ -1,0 +1,192 @@
+Converting DBF files from: jmena(1).zip
+Output directory: output
+Using automatic encoding detection
+Found 30 DBF files in jmena(1).zip
+
+Processing BAZINY.DBF...
+  Detected encoding: cp852 (score: 0.114, method: czech_scoring)
+  Loaded 39 records with 8 columns
+  Saved to Excel sheet 'BAZINY' and output/BAZINY.csv
+
+Processing BRODY.DBF...
+  Detected encoding: cp852 (score: 0.075, method: czech_scoring)
+  Loaded 48 records with 8 columns
+  Saved to Excel sheet 'BRODY' and output/BRODY.csv
+
+Processing DOMY.DBF...
+  Detected encoding: cp852 (score: 0.098, method: czech_scoring)
+  Loaded 80 records with 12 columns
+  Saved to Excel sheet 'DOMY' and output/DOMY.csv
+
+Processing HORY.DBF...
+  Detected encoding: cp852 (score: 0.130, method: czech_scoring)
+  Loaded 166 records with 8 columns
+  Saved to Excel sheet 'HORY' and output/HORY.csv
+
+Processing HRADY.DBF...
+  Detected encoding: cp852 (score: 0.101, method: czech_scoring)
+  Loaded 180 records with 8 columns
+  Saved to Excel sheet 'HRADY' and output/HRADY.csv
+
+Processing JESKYNE.DBF...
+  Detected encoding: cp852 (score: 0.108, method: czech_scoring)
+  Loaded 55 records with 8 columns
+  Saved to Excel sheet 'JESKYNE' and output/JESKYNE.csv
+
+Processing JEZERA.DBF...
+  Detected encoding: cp852 (score: 0.109, method: czech_scoring)
+  Loaded 160 records with 8 columns
+  Saved to Excel sheet 'JEZERA' and output/JEZERA.csv
+
+Processing JMENA.DBF...
+  Detected encoding: cp852 (score: 0.017, method: czech_scoring)
+  Loaded 19820 records with 21 columns
+  Saved to Excel sheet 'JMENA' and output/JMENA.csv
+
+Processing LEDOVCE.DBF...
+  Detected encoding: cp852 (score: 0.071, method: czech_scoring)
+  Loaded 36 records with 8 columns
+  Saved to Excel sheet 'LEDOVCE' and output/LEDOVCE.csv
+
+Processing LESY.DBF...
+  Detected encoding: cp852 (score: 0.081, method: czech_scoring)
+  Loaded 153 records with 8 columns
+  Saved to Excel sheet 'LESY' and output/LESY.csv
+
+Processing LODE.DBF...
+  Detected encoding: cp852 (score: 0.116, method: czech_scoring)
+  Loaded 91 records with 8 columns
+  Saved to Excel sheet 'LODE' and output/LODE.csv
+
+Processing MESTA.DBF...
+  Detected encoding: cp852 (score: 0.047, method: czech_scoring)
+  Loaded 8607 records with 8 columns
+  Saved to Excel sheet 'MESTA' and output/MESTA.csv
+
+Processing MORE.DBF...
+  Detected encoding: cp852 (score: 0.136, method: czech_scoring)
+  Loaded 64 records with 8 columns
+  Saved to Excel sheet 'MORE' and output/MORE.csv
+
+Processing MYSY.DBF...
+  Detected encoding: cp852 (score: 0.080, method: czech_scoring)
+  Loaded 48 records with 8 columns
+  Saved to Excel sheet 'MYSY' and output/MYSY.csv
+
+Processing OSTROVY.DBF...
+  Detected encoding: cp852 (score: 0.072, method: czech_scoring)
+  Loaded 159 records with 8 columns
+  Saved to Excel sheet 'OSTROVY' and output/OSTROVY.csv
+
+Processing PLANE.DBF...
+  Detected encoding: cp852 (score: 0.270, method: czech_scoring)
+  Loaded 54 records with 8 columns
+  Saved to Excel sheet 'PLANE' and output/PLANE.csv
+
+Processing POHORI.DBF...
+  Detected encoding: cp852 (score: 0.138, method: czech_scoring)
+  Loaded 110 records with 8 columns
+  Saved to Excel sheet 'POHORI' and output/POHORI.csv
+
+Processing POUSTE.DBF...
+  Detected encoding: cp852 (score: 0.117, method: czech_scoring)
+  Loaded 43 records with 8 columns
+  Saved to Excel sheet 'POUSTE' and output/POUSTE.csv
+
+Processing PRIDOMKY.DBF...
+  Detected encoding: cp852 (score: 0.174, method: czech_scoring)
+  Loaded 1206 records with 8 columns
+  Saved to Excel sheet 'PRIDOMKY' and output/PRIDOMKY.csv
+
+Processing PRIJMENI.DBF...
+  Detected encoding: cp852 (score: 0.136, method: czech_scoring)
+  Loaded 1375 records with 21 columns
+  Saved to Excel sheet 'PRIJMENI' and output/PRIJMENI.csv
+
+Processing PRUSMYKY.DBF...
+  Detected encoding: cp852 (score: 0.066, method: czech_scoring)
+  Loaded 38 records with 8 columns
+  Saved to Excel sheet 'PRUSMYKY' and output/PRUSMYKY.csv
+
+Processing REKY.DBF...
+  Detected encoding: cp852 (score: 0.127, method: czech_scoring)
+  Loaded 223 records with 8 columns
+  Saved to Excel sheet 'REKY' and output/REKY.csv
+
+Processing ROKLE.DBF...
+  Detected encoding: cp852 (score: 0.108, method: czech_scoring)
+  Loaded 44 records with 8 columns
+  Saved to Excel sheet 'ROKLE' and output/ROKLE.csv
+
+Processing SOUTESKY.DBF...
+  Detected encoding: cp852 (score: 0.080, method: czech_scoring)
+  Loaded 39 records with 8 columns
+  Saved to Excel sheet 'SOUTESKY' and output/SOUTESKY.csv
+
+Processing STEPI.DBF...
+  Detected encoding: cp852 (score: 0.143, method: czech_scoring)
+  Loaded 51 records with 8 columns
+  Saved to Excel sheet 'STEPI' and output/STEPI.csv
+
+Processing UDOLI.DBF...
+  Detected encoding: cp852 (score: 0.315, method: czech_scoring)
+  Loaded 69 records with 8 columns
+  Saved to Excel sheet 'UDOLI' and output/UDOLI.csv
+
+Processing ULICE.DBF...
+  Detected encoding: cp852 (score: 0.227, method: czech_scoring)
+  Loaded 703 records with 10 columns
+  Saved to Excel sheet 'ULICE' and output/ULICE.csv
+
+Processing UTESY.DBF...
+  Detected encoding: cp852 (score: 0.181, method: czech_scoring)
+  Loaded 43 records with 8 columns
+  Saved to Excel sheet 'UTESY' and output/UTESY.csv
+
+Processing ZATOKY.DBF...
+  Detected encoding: cp852 (score: 0.227, method: czech_scoring)
+  Loaded 88 records with 8 columns
+  Saved to Excel sheet 'ZATOKY' and output/ZATOKY.csv
+
+Processing ZEME.DBF...
+  Detected encoding: cp852 (score: 0.085, method: czech_scoring)
+  Loaded 200 records with 8 columns
+  Saved to Excel sheet 'ZEME' and output/ZEME.csv
+
+Excel workbook saved to: output/drd_names.xlsx
+
+============================================================
+ENCODING SUMMARY
+============================================================
+BAZINY.DBF           -> cp852
+BRODY.DBF            -> cp852
+DOMY.DBF             -> cp852
+HORY.DBF             -> cp852
+HRADY.DBF            -> cp852
+JESKYNE.DBF          -> cp852
+JEZERA.DBF           -> cp852
+JMENA.DBF            -> cp852
+LEDOVCE.DBF          -> cp852
+LESY.DBF             -> cp852
+LODE.DBF             -> cp852
+MESTA.DBF            -> cp852
+MORE.DBF             -> cp852
+MYSY.DBF             -> cp852
+OSTROVY.DBF          -> cp852
+PLANE.DBF            -> cp852
+POHORI.DBF           -> cp852
+POUSTE.DBF           -> cp852
+PRIDOMKY.DBF         -> cp852
+PRIJMENI.DBF         -> cp852
+PRUSMYKY.DBF         -> cp852
+REKY.DBF             -> cp852
+ROKLE.DBF            -> cp852
+SOUTESKY.DBF         -> cp852
+STEPI.DBF            -> cp852
+UDOLI.DBF            -> cp852
+ULICE.DBF            -> cp852
+UTESY.DBF            -> cp852
+ZATOKY.DBF           -> cp852
+ZEME.DBF             -> cp852
+
+Conversion completed successfully!

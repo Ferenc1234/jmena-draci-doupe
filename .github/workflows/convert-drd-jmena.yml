@@ -1,0 +1,97 @@
+name: Convert DRD Names
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      encoding:
+        description: 'Force specific encoding (cp852, cp1250, or iso-8859-2). Leave empty for auto-detection.'
+        required: false
+        type: string
+      zip_path:
+        description: 'Path to ZIP file containing DBF files'
+        required: false
+        default: 'jmena(1).zip'
+        type: string
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install dbfread openpyxl pandas chardet
+    
+    - name: Check if ZIP file exists
+      run: |
+        if [ ! -f "${{ inputs.zip_path || 'jmena(1).zip' }}" ]; then
+          echo "Error: ZIP file ${{ inputs.zip_path || 'jmena(1).zip' }} not found"
+          exit 1
+        fi
+        echo "Found ZIP file: ${{ inputs.zip_path || 'jmena(1).zip' }}"
+    
+    - name: Convert DBF files (auto-detection)
+      if: ${{ !inputs.encoding }}
+      run: |
+        python convert_drd_names.py "${{ inputs.zip_path || 'jmena(1).zip' }}" --output-dir output
+    
+    - name: Convert DBF files (forced encoding)
+      if: ${{ inputs.encoding }}
+      run: |
+        python convert_drd_names.py "${{ inputs.zip_path || 'jmena(1).zip' }}" --output-dir output --encoding ${{ inputs.encoding }}
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: converted-drd-names
+        path: output/
+        retention-days: 30
+    
+    - name: Commit and push generated outputs
+      # Only commit on push to main branch or manual workflow dispatch
+      # Skip if this is a PR or if commit message contains [skip-convert]
+      if: |
+        (github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip-convert]')) ||
+        (github.event_name == 'workflow_dispatch')
+      run: |
+        # Configure git
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # Add generated files
+        git add output/
+        
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          # Create commit message
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            COMMIT_MSG="Convert DRD names (manual dispatch"
+            if [ -n "${{ inputs.encoding }}" ]; then
+              COMMIT_MSG="$COMMIT_MSG, encoding: ${{ inputs.encoding }}"
+            fi
+            if [ "${{ inputs.zip_path }}" != "jmena(1).zip" ]; then
+              COMMIT_MSG="$COMMIT_MSG, zip: ${{ inputs.zip_path }}"
+            fi
+            COMMIT_MSG="$COMMIT_MSG) [skip-convert]"
+          else
+            COMMIT_MSG="Convert DRD names [skip-convert]"
+          fi
+          
+          # Commit and push
+          git commit -m "$COMMIT_MSG"
+          git push
+        fi
