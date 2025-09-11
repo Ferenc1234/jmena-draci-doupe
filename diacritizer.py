@@ -74,6 +74,12 @@ class CzechDiacritizer:
                 'duch': {'duch', 'duchu', 'duchů', 'duchy', 'duchem'},
                 'komar': {'komár', 'komára', 'komárů', 'komáry', 'komárem', 'komar'},
                 'bazina': {'bažina', 'bažiny', 'bažin', 'bazina'},
+                # Add some common Czech name patterns for testing
+                'pavel': {'Pavel', 'Pavla', 'Pavlů', 'Pavly', 'Pavlem'},
+                'jana': {'Jana', 'Jany', 'Janě', 'Janu', 'Jano', 'Janou'},
+                'petr': {'Petr', 'Petra', 'Petrovi', 'Petrem', 'Petrů'},
+                'martin': {'Martin', 'Martina', 'Martinovi', 'Martinem', 'Martinů'},
+                'tomas': {'Tomáš', 'Tomáše', 'Tomášovi', 'Tomášem', 'Tomášů'},
             }
             
             # Save sample dictionary to cache
