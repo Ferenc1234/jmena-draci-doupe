@@ -25,6 +25,13 @@ except ImportError as e:
     print("Please install: pip install dbfread openpyxl pandas chardet")
     sys.exit(1)
 
+# Import diacritics restoration module
+try:
+    from diacritics import DiacriticsRestorer
+except ImportError:
+    print("Warning: Diacritics restoration module not available")
+    DiacriticsRestorer = None
+
 
 def score_czech_encoding(text_sample: str) -> float:
     """
@@ -130,26 +137,85 @@ def detect_dbf_encoding(dbf_path: str, sample_size: int = 100) -> Tuple[str, flo
     return best_encoding, best_score, best_method
 
 
-def convert_dbf_to_dataframe(dbf_path: str, encoding: str) -> pd.DataFrame:
-    """Convert a DBF file to a pandas DataFrame with specified encoding."""
+def convert_dbf_to_dataframe(dbf_path: str, encoding: str, restore_diacritics: bool = True, restorer: Optional[object] = None) -> pd.DataFrame:
+    """Convert a DBF file to a pandas DataFrame with specified encoding and optional diacritics restoration."""
     try:
         table = DBF(dbf_path, encoding=encoding, ignore_missing_memofile=True)
         records = []
         for record in table:
             records.append(dict(record))
-        return pd.DataFrame(records)
+        
+        df = pd.DataFrame(records)
+        
+        # Apply diacritics restoration if requested and available
+        if restore_diacritics and DiacriticsRestorer is not None and not df.empty:
+            df = restore_dataframe_diacritics(df, restorer)
+        
+        return df
     except Exception as e:
         print(f"Error converting {dbf_path} with encoding {encoding}: {e}")
         raise
 
 
+def restore_dataframe_diacritics(df: pd.DataFrame, restorer: Optional[object] = None) -> pd.DataFrame:
+    """
+    Restore Czech diacritics in all string columns of a DataFrame.
+    
+    Args:
+        df: Input DataFrame
+        restorer: Optional pre-initialized DiacriticsRestorer instance
+        
+    Returns:
+        DataFrame with restored diacritics in string columns
+    """
+    if df.empty:
+        return df
+    
+    # Initialize diacritics restorer if not provided
+    if restorer is None:
+        restorer = DiacriticsRestorer()
+    
+    # Create a copy to avoid modifying the original
+    result_df = df.copy()
+    
+    # Process each column
+    for col_name in result_df.columns:
+        col_data = result_df[col_name]
+        
+        # Check if this column contains string data that might need restoration
+        if col_data.dtype == object:
+            # Check if there are any non-null string values
+            string_values = col_data.dropna().astype(str)
+            if not string_values.empty:
+                # Apply diacritics restoration to non-empty string values
+                def restore_cell_value(value):
+                    if pd.isna(value) or value == '' or not isinstance(value, str):
+                        return value
+                    try:
+                        restored = restorer.restore_text_diacritics(str(value))
+                        return restored
+                    except Exception:
+                        return value  # Return original on error
+                
+                result_df[col_name] = result_df[col_name].apply(restore_cell_value)
+    
+    return result_df
+
+
 def process_dbf_files(
     zip_path: str,
     output_dir: str = "output",
-    force_encoding: Optional[str] = None
+    force_encoding: Optional[str] = None,
+    restore_diacritics: bool = True
 ) -> Dict[str, str]:
     """
     Process all DBF files in a ZIP archive.
+    
+    Args:
+        zip_path: Path to ZIP file containing DBF files
+        output_dir: Directory to save output files
+        force_encoding: Optional encoding to force for all DBF files
+        restore_diacritics: Whether to restore Czech diacritics in the data
     
     Returns:
         Dictionary mapping DBF filenames to their detected/used encodings
@@ -161,6 +227,14 @@ def process_dbf_files(
     temp_dir.mkdir(exist_ok=True)
     
     encoding_summary = {}
+    
+    # Initialize diacritics restorer once if needed
+    diacritics_restorer = None
+    if restore_diacritics and DiacriticsRestorer is not None:
+        print("Initializing Czech diacritics restoration...")
+        diacritics_restorer = DiacriticsRestorer()
+        stats = diacritics_restorer.get_statistics()
+        print(f"Loaded {stats['overrides_count']} manual overrides and {stats['dictionary_entries']} dictionary entries")
     
     try:
         with zipfile.ZipFile(zip_path, 'r') as zip_file:
@@ -202,13 +276,15 @@ def process_dbf_files(
                     
                     # Convert to DataFrame
                     try:
-                        df = convert_dbf_to_dataframe(str(dbf_path), encoding)
+                        df = convert_dbf_to_dataframe(str(dbf_path), encoding, restore_diacritics, diacritics_restorer)
                         
                         if df.empty:
                             print(f"  Warning: {dbf_name} is empty")
                             continue
                         
                         print(f"  Loaded {len(df)} records with {len(df.columns)} columns")
+                        if restore_diacritics and DiacriticsRestorer is not None:
+                            print(f"  Applied Czech diacritics restoration")
                         
                         # Add to Excel workbook
                         sheet_name = base_name[:31]  # Excel sheet name limit
@@ -253,6 +329,11 @@ def main():
         choices=['cp852', 'cp1250', 'iso-8859-2'],
         help="Force specific encoding for all DBF files (overrides auto-detection)"
     )
+    parser.add_argument(
+        "--no-diacritics", 
+        action="store_true",
+        help="Disable Czech diacritics restoration (use original data as-is)"
+    )
     
     args = parser.parse_args()
     
@@ -268,11 +349,22 @@ def main():
     else:
         print("Using automatic encoding detection")
     
+    restore_diacritics = not args.no_diacritics
+    if restore_diacritics:
+        if DiacriticsRestorer is not None:
+            print("Czech diacritics restoration: ENABLED")
+        else:
+            print("Czech diacritics restoration: DISABLED (module not available)")
+            restore_diacritics = False
+    else:
+        print("Czech diacritics restoration: DISABLED (by user request)")
+    
     try:
         encoding_summary = process_dbf_files(
             args.zip_file,
             args.output_dir,
-            args.encoding
+            args.encoding,
+            restore_diacritics
         )
         
         print("\n" + "="*60)
