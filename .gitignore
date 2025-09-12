@@ -1,0 +1,15 @@
+# Output directories
+output/
+test_output*/
+
+# Logs
+*.log
+morfflex_download.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Downloaded MorfFlex files (will be downloaded by CI)
+# Note: sample test files can be committed manually

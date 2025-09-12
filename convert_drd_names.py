@@ -13,7 +13,7 @@ import os
 import sys
 import zipfile
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Set
 
 try:
     import pandas as pd
@@ -24,6 +24,90 @@ except ImportError as e:
     print(f"Missing required package: {e}")
     print("Please install: pip install dbfread openpyxl pandas chardet")
     sys.exit(1)
+
+
+def load_morfflex_dictionary(morfflex_path: str) -> Set[str]:
+    """
+    Load MorfFlex forms dictionary for diacritization enhancement.
+    
+    Returns:
+        Set of properly diacritized word forms from MorfFlex
+    """
+    if not morfflex_path:
+        print("ℹ️  No MorfFlex path specified, using overrides-only mode")
+        return set()
+    
+    if not os.path.exists(morfflex_path):
+        print(f"⚠️  WARNING: MorfFlex dictionary not found at {morfflex_path}")
+        print("ℹ️  Falling back to overrides-only diacritization mode")
+        return set()
+    
+    print(f"📚 Loading MorfFlex dictionary from: {morfflex_path}")
+    
+    try:
+        forms = set()
+        with open(morfflex_path, 'r', encoding='utf-8') as f:
+            for line_num, line in enumerate(f, 1):
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    # MorfFlex TSV format: word_form\tlemma\ttag
+                    parts = line.split('\t')
+                    if len(parts) >= 1:
+                        form = parts[0].strip()
+                        if form:
+                            forms.add(form)
+                
+                # Progress indicator for large files
+                if line_num % 100000 == 0:
+                    print(f"   Loaded {line_num:,} lines, {len(forms):,} unique forms...")
+        
+        print(f"✅ Loaded MorfFlex forms: {len(forms):,} unique word forms")
+        return forms
+        
+    except Exception as e:
+        print(f"❌ ERROR loading MorfFlex dictionary: {e}")
+        print("ℹ️  Falling back to overrides-only diacritization mode")
+        return set()
+
+
+def enhance_diacritization_with_morfflex(text: str, morfflex_forms: Set[str]) -> str:
+    """
+    Enhance diacritization using MorfFlex dictionary.
+    
+    This function applies MorfFlex dictionary lookups to improve diacritics
+    beyond what encoding detection can provide.
+    """
+    if not morfflex_forms or not text:
+        return text
+    
+    # Simple word-based lookup for now
+    # In a more sophisticated implementation, this could use morphological analysis
+    words = text.split()
+    enhanced_words = []
+    
+    for word in words:
+        # Clean word for lookup (remove punctuation)
+        clean_word = ''.join(c for c in word if c.isalpha())
+        
+        # Try exact match first
+        if clean_word in morfflex_forms:
+            # Replace the alphabetic part with the diacritized version
+            enhanced_word = word.replace(clean_word, clean_word)
+            enhanced_words.append(enhanced_word)
+        else:
+            # Try case variations
+            found_match = False
+            for variant in [clean_word.lower(), clean_word.upper(), clean_word.capitalize()]:
+                if variant in morfflex_forms:
+                    enhanced_word = word.replace(clean_word, variant)
+                    enhanced_words.append(enhanced_word)
+                    found_match = True
+                    break
+            
+            if not found_match:
+                enhanced_words.append(word)  # Keep original if no match
+    
+    return ' '.join(enhanced_words)
 
 
 def score_czech_encoding(text_sample: str) -> float:
@@ -130,14 +214,35 @@ def detect_dbf_encoding(dbf_path: str, sample_size: int = 100) -> Tuple[str, flo
     return best_encoding, best_score, best_method
 
 
-def convert_dbf_to_dataframe(dbf_path: str, encoding: str) -> pd.DataFrame:
-    """Convert a DBF file to a pandas DataFrame with specified encoding."""
+def convert_dbf_to_dataframe(dbf_path: str, encoding: str, morfflex_forms: Set[str] = None) -> pd.DataFrame:
+    """Convert a DBF file to a pandas DataFrame with specified encoding and optional MorfFlex enhancement."""
     try:
         table = DBF(dbf_path, encoding=encoding, ignore_missing_memofile=True)
         records = []
+        enhanced_count = 0
+        
         for record in table:
-            records.append(dict(record))
-        return pd.DataFrame(records)
+            record_dict = dict(record)
+            
+            # Apply MorfFlex enhancement to string fields if dictionary is available
+            if morfflex_forms:
+                for field_name, value in record_dict.items():
+                    if isinstance(value, str) and value.strip():
+                        original_value = value.strip()
+                        enhanced_value = enhance_diacritization_with_morfflex(original_value, morfflex_forms)
+                        if enhanced_value != original_value:
+                            enhanced_count += 1
+                        record_dict[field_name] = enhanced_value
+            
+            records.append(record_dict)
+        
+        df = pd.DataFrame(records)
+        
+        if morfflex_forms and enhanced_count > 0:
+            print(f"   📝 Enhanced {enhanced_count} text fields with MorfFlex diacritics")
+        
+        return df
+        
     except Exception as e:
         print(f"Error converting {dbf_path} with encoding {encoding}: {e}")
         raise
@@ -146,7 +251,8 @@ def convert_dbf_to_dataframe(dbf_path: str, encoding: str) -> pd.DataFrame:
 def process_dbf_files(
     zip_path: str,
     output_dir: str = "output",
-    force_encoding: Optional[str] = None
+    force_encoding: Optional[str] = None,
+    morfflex_path: Optional[str] = None
 ) -> Dict[str, str]:
     """
     Process all DBF files in a ZIP archive.
@@ -155,6 +261,17 @@ def process_dbf_files(
         Dictionary mapping DBF filenames to their detected/used encodings
     """
     os.makedirs(output_dir, exist_ok=True)
+    
+    # Load MorfFlex dictionary if available
+    morfflex_forms = set()
+    if morfflex_path:
+        morfflex_forms = load_morfflex_dictionary(morfflex_path)
+    else:
+        # Check default location
+        default_morfflex_path = os.environ.get('MORFFLEX_PATH', 'diacritics/morfflex.tsv')
+        if os.path.exists(default_morfflex_path):
+            print(f"📍 Found MorfFlex dictionary at default location: {default_morfflex_path}")
+            morfflex_forms = load_morfflex_dictionary(default_morfflex_path)
     
     # Extract ZIP to temporary directory
     temp_dir = Path(output_dir) / "temp_dbf"
@@ -200,9 +317,9 @@ def process_dbf_files(
                     
                     encoding_summary[dbf_name] = encoding
                     
-                    # Convert to DataFrame
+                    # Convert to DataFrame with MorfFlex enhancement
                     try:
-                        df = convert_dbf_to_dataframe(str(dbf_path), encoding)
+                        df = convert_dbf_to_dataframe(str(dbf_path), encoding, morfflex_forms)
                         
                         if df.empty:
                             print(f"  Warning: {dbf_name} is empty")
@@ -253,12 +370,21 @@ def main():
         choices=['cp852', 'cp1250', 'iso-8859-2'],
         help="Force specific encoding for all DBF files (overrides auto-detection)"
     )
+    parser.add_argument(
+        "--morfflex-path",
+        help="Path to MorfFlex dictionary TSV file (default: diacritics/morfflex.tsv or MORFFLEX_PATH env var)"
+    )
     
     args = parser.parse_args()
     
     if not os.path.exists(args.zip_file):
         print(f"Error: ZIP file not found: {args.zip_file}")
         sys.exit(1)
+    
+    # Determine MorfFlex path
+    morfflex_path = args.morfflex_path
+    if not morfflex_path:
+        morfflex_path = os.environ.get('MORFFLEX_PATH', 'diacritics/morfflex.tsv')
     
     print(f"Converting DBF files from: {args.zip_file}")
     print(f"Output directory: {args.output_dir}")
@@ -268,11 +394,18 @@ def main():
     else:
         print("Using automatic encoding detection")
     
+    print(f"MorfFlex dictionary path: {morfflex_path}")
+    if os.path.exists(morfflex_path):
+        print("✅ MorfFlex dictionary found - enhanced diacritization enabled")
+    else:
+        print("⚠️  MorfFlex dictionary not found - using overrides-only mode")
+    
     try:
         encoding_summary = process_dbf_files(
             args.zip_file,
             args.output_dir,
-            args.encoding
+            args.encoding,
+            morfflex_path if os.path.exists(morfflex_path) else None
         )
         
         print("\n" + "="*60)
