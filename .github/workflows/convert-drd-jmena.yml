@@ -34,6 +34,35 @@ jobs:
         python -m pip install --upgrade pip
         pip install dbfread openpyxl pandas chardet
     
+    - name: Cache MorfFlex dictionary
+      id: cache-morfflex
+      uses: actions/cache@v4
+      with:
+        path: diacritics/morfflex.tsv
+        key: morfflex-${{ hashFiles('download_morfflex.py') }}
+        restore-keys: |
+          morfflex-
+    
+    - name: Download MorfFlex dictionary
+      id: download-morfflex
+      run: |
+        python download_morfflex.py --output diacritics/morfflex.tsv 2>&1 | tee morfflex_download.log
+        
+        # Capture cache key and degraded status
+        if grep -q "CACHE_KEY=" morfflex_download.log; then
+          CACHE_KEY=$(grep "CACHE_KEY=" morfflex_download.log | cut -d'=' -f2)
+          echo "cache_key=${CACHE_KEY}" >> $GITHUB_OUTPUT
+        fi
+        
+        # Check if download failed (MORFFLEX_DEGRADED will be set)
+        if [ "${MORFFLEX_DEGRADED:-false}" = "true" ]; then
+          echo "degraded=true" >> $GITHUB_OUTPUT
+          echo "::warning title=MorfFlex Download Failed::MorfFlex dictionary could not be downloaded. Running in overrides-only mode."
+        else
+          echo "degraded=false" >> $GITHUB_OUTPUT
+          echo "::notice title=MorfFlex Ready::MorfFlex dictionary loaded successfully for enhanced diacritization."
+        fi
+    
     - name: Set conversion parameters
       run: |
         # Set ZIP_PATH with fallback for non-dispatch triggers
@@ -54,6 +83,14 @@ jobs:
         fi
         echo "ENCODING_ARG=${ENCODING_ARG}" >> $GITHUB_ENV
         
+        # Set MORFFLEX_PATH
+        if [ -f "diacritics/morfflex.tsv" ]; then
+          MORFFLEX_PATH="diacritics/morfflex.tsv"
+        else
+          MORFFLEX_PATH=""
+        fi
+        echo "MORFFLEX_PATH=${MORFFLEX_PATH}" >> $GITHUB_ENV
+        
         # Log the chosen settings for clarity
         echo "=== Conversion Settings ==="
         echo "ZIP_PATH: ${ZIP_PATH}"
@@ -63,6 +100,8 @@ jobs:
         else
           echo "ENCODING: auto-detection"
         fi
+        echo "MORFFLEX_PATH: ${MORFFLEX_PATH:-none}"
+        echo "MORFFLEX_DEGRADED: ${MORFFLEX_DEGRADED:-false}"
         echo "=========================="
     
     - name: Check if ZIP file exists
@@ -75,7 +114,13 @@ jobs:
     
     - name: Convert DBF files
       run: |
-        python convert_drd_names.py "$ZIP_PATH" --output-dir output $ENCODING_ARG
+        # Add MorfFlex path if available
+        MORFFLEX_ARG=""
+        if [ -n "$MORFFLEX_PATH" ] && [ -f "$MORFFLEX_PATH" ]; then
+          MORFFLEX_ARG="--morfflex-path $MORFFLEX_PATH"
+        fi
+        
+        python convert_drd_names.py "$ZIP_PATH" --output-dir output $ENCODING_ARG $MORFFLEX_ARG
     
     - name: Create output ZIP archive
       run: |
